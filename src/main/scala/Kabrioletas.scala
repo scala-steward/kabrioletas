@@ -20,7 +20,7 @@ class CabrioCheck extends Actor with ActorLogging {
   import CabrioCheck._
   import context.dispatcher
 
-  val config = context.system.settings.config.getConfig("citywasp")
+  val config      = context.system.settings.config.getConfig("citywasp")
   implicit val cw = RemoteCityWasp(config)
 
   val twitter = TwitterRestClient()
@@ -49,14 +49,15 @@ class CabrioCheck extends Actor with ActorLogging {
       tweetAbout(car)
     case LastTweetAndCar(RatedData(_, Seq(tweet)), Some(car)) =>
       if (!tweet.text.contains("ready")) {
-        log.info(s"Found a car [$car] and last tweet was about taken car [${tweet.text}]. Let's tell the world about the car we just found!")
+        log.info(
+          s"Found a car [$car] and last tweet was about taken car [${tweet.text}]. Let's tell the world about the car we just found!")
         tweetAbout(car).pipeTo(self)
-      }
-      else if (tweet.coordinates.isDefined && math.abs(tweet.coordinates.get.coordinates.head - car.lon) > 0.001 && math.abs(tweet.coordinates.get.coordinates.tail.head - car.lat) > 0.001) {
-        log.info(s"Found a car [$car] and last tweet was about a parked car [${tweet.text}], but it was on a different place. Let tell the world about the car we just found!")
+      } else if (tweet.coordinates.isDefined && math.abs(tweet.coordinates.get.coordinates.head - car.lon) > 0.001 && math
+                   .abs(tweet.coordinates.get.coordinates.tail.head - car.lat) > 0.001) {
+        log.info(
+          s"Found a car [$car] and last tweet was about a parked car [${tweet.text}], but it was on a different place. Let tell the world about the car we just found!")
         tweetAbout(car).pipeTo(self)
-      }
-      else {
+      } else {
         log.info(s"Found a car [$car] and last tweet was about a parked car [${tweet.text}] at the same place.")
       }
     case LastTweetAndCar(RatedData(_, Seq(tweet)), None) =>
@@ -70,14 +71,19 @@ class CabrioCheck extends Actor with ActorLogging {
       log.error(s"Unhandled message $m")
   }
 
-
-
   def tweetAbout(car: ParkedCar) = {
-    twitter.createTweet(status = f"\uD83D\uDE95\uD83D\uDE95\uD83D\uDE95 Parked and ready for a new adventure. Pick me up! https://www.google.com/maps?q=${car.lat}%.6f,${car.lon}%.6f", latitude = Some(car.lat.toLong), longitude = Some(car.lon.toLong), display_coordinates = true)
+    twitter.createTweet(
+      status =
+        f"\uD83D\uDE95\uD83D\uDE95\uD83D\uDE95 Parked and ready for a new adventure. Pick me up! https://www.google.com/maps?q=${car.lat}%.6f,${car.lon}%.6f",
+      latitude = Some(car.lat.toLong),
+      longitude = Some(car.lon.toLong),
+      display_coordinates = true
+    )
   }
 
   def tweetAboutNoCar() = {
-    twitter.createTweet(status = s"\uD83D\uDD1C\uD83D\uDD1C\uD83D\uDD1C I am on a ride right now. Will let you know when I am free! (${Random.alphanumeric.take(6).mkString})")
+    twitter.createTweet(status =
+      s"\uD83D\uDD1C\uD83D\uDD1C\uD83D\uDD1C I am on a ride right now. Will let you know when I am free! (${Random.alphanumeric.take(6).mkString})")
   }
 }
 
