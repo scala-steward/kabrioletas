@@ -3,8 +3,9 @@ name := "kabrioletas"
 
 resolvers += Resolver.bintrayRepo("2m", "maven")
 libraryDependencies ++= Seq(
-  "citywasp"          %% "citywasp-api" % "0.3",
-  "com.typesafe.akka" %% "akka-stream"  % "2.5.2"
+  "citywasp"            %% "citywasp-api" % "0.3",
+  "com.typesafe.akka"   %% "akka-stream"  % "2.5.2",
+  "com.danielasfregola" %% "twitter4s"    % "5.1"
 )
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
