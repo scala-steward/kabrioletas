@@ -42,12 +42,12 @@ class CabrioCheck extends Actor with ActorLogging {
       val car = cars.find(_.brand.equalsIgnoreCase("porsche"))
       log.info(s"Car search resulted in $car")
       twitter.homeTimeline(count = 1).map(LastTweetAndCar(_, car)).pipeTo(self)
-    case LastTweetAndCar(RatedData(_, Seq()), None) =>
+    case LastTweetAndCar(RatedData(_, Nil), None) =>
       log.info(s"No tweets and no car. Keep on searching...")
-    case LastTweetAndCar(RatedData(_, Seq()), Some(car)) =>
+    case LastTweetAndCar(RatedData(_, Nil), Some(car)) =>
       log.info(s"Found a car. It is gonna be a great first tweet!")
       tweetAbout(car)
-    case LastTweetAndCar(RatedData(_, Seq(tweet)), Some(car)) =>
+    case LastTweetAndCar(RatedData(_, tweet :: _), Some(car)) =>
       if (!tweet.text.contains("ready")) {
         log.info(
           s"Found a car [$car] and last tweet was about taken car [${tweet.text}]. Let's tell the world about the car we just found!")
@@ -60,10 +60,12 @@ class CabrioCheck extends Actor with ActorLogging {
       } else {
         log.info(s"Found a car [$car] and last tweet was about a parked car [${tweet.text}] at the same place.")
       }
-    case LastTweetAndCar(RatedData(_, Seq(tweet)), None) =>
+    case LastTweetAndCar(RatedData(_, tweet :: _), None) =>
       if (tweet.text.contains("ready")) {
         log.info(s"No car and last tweet was about a parked car [${tweet.text}]. Tweet about taken car.")
         tweetAboutNoCar().pipeTo(self)
+      } else {
+        log.info(s"No car and we know it!")
       }
     case t: Tweet =>
       log.info("Tweet success.")
