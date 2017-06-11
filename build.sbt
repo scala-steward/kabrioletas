@@ -5,9 +5,10 @@ organization := "lt.dvim.citywasp"
     organizationName := "2m"
 organizationHomepage := Some(url("http://2m.lt"))
 
-    micrositeTwitter    := "@kabrioletas"
-micrositeGithubOwner    := "2m"
- micrositeGithubRepo    := "kabrioletas"
+       micrositeTwitter := "@kabrioletas"
+   micrositeGithubOwner := "2m"
+    micrositeGithubRepo := "kabrioletas"
+       micrositeBaseUrl := "/kabrioletas"
 micrositeAnalyticsToken := "UA-100826420-1"
   micrositeExtraMdFiles := Map(file("readme.md") -> microsites.ExtraMdFileConfig("index.md", "home"))
        micrositePalette := Map(
