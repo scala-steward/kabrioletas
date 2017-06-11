@@ -1,0 +1,2 @@
+# Remove when https://github.com/47deg/sbt-microsites/issues/194 is implemented
+/src/main/tut/index.md
