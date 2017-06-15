@@ -31,5 +31,7 @@ libraryDependencies ++= Seq(
  licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 startYear := Some(2017)
 
-scalafmtVersion := "1.0.0-RC2"
+  scalafmtVersion := "1.0.0-RC3"
+scalafmtOnCompile := true
+
 enablePlugins(AutomateHeaderPlugin, JavaAppPackaging, MicrositesPlugin, ScalafmtPlugin)
