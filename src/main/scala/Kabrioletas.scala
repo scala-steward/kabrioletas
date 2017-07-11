@@ -16,6 +16,8 @@
 
 package lt.dvim.citywasp.kabrioletas
 
+import java.time.{Duration, Instant}
+
 import akka.actor.SupervisorStrategy.Resume
 import akka.actor.{Actor, ActorLogging, ActorSystem, OneForOneStrategy, Props}
 import akka.http.scaladsl.Http
@@ -30,7 +32,7 @@ import com.danielasfregola.twitter4s.entities.{RatedData, Tweet}
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe._
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.{Duration => _, _}
 import scala.util.Random
 
 object CabrioCheck {
@@ -52,7 +54,13 @@ class CabrioCheck extends Actor with ActorLogging {
   val twitter               = TwitterRestClient()
   final val OpenCageDataKey = context.system.settings.config.getString("opencagedata.key")
 
+  var lastTweetAt: Instant = _
+
   context.system.scheduler.schedule(0.seconds, 5.minutes, self, DoTheCheck)
+
+  override def preStart() = {
+    resetLastTweetTimer()
+  }
 
   def receive = {
     case DoTheCheck =>
@@ -71,6 +79,9 @@ class CabrioCheck extends Actor with ActorLogging {
       twitter.homeTimeline(count = 1).map(LastTweetAndCar(_, car)).pipeTo(self)
     case LastTweetAndCar(RatedData(_, Nil), None) =>
       log.info(s"No tweets and no car. Keep on searching...")
+      if (Duration.between(Instant.now, lastTweetAt).toDays > 1) {
+        tweetAboutSearch().pipeTo(self)
+      }
     case LastTweetAndCar(RatedData(_, Nil), Some(car)) =>
       log.info(s"Found a car. It is gonna be a great first tweet!")
       reverseGeocodeCarLocation(car).map(CarWithLocation(car, _)).pipeTo(self)
@@ -93,12 +104,16 @@ class CabrioCheck extends Actor with ActorLogging {
         tweetAboutNoCar().pipeTo(self)
       } else {
         log.info(s"No car and we know it!")
+        if (Duration.between(Instant.now, lastTweetAt).toDays > 1) {
+          tweetAboutSearch().pipeTo(self)
+        }
       }
     case cwl @ CarWithLocation(car, location) =>
       log.info(s"Reverse geocoded car location to $location")
       tweetAbout(cwl).pipeTo(self)
     case t: Tweet =>
       log.info("Tweet success.")
+      resetLastTweetTimer()
     case m =>
       log.error(s"Unhandled message $m")
   }
@@ -129,6 +144,14 @@ class CabrioCheck extends Actor with ActorLogging {
     twitter.createTweet(status =
       s"\uD83D\uDD1C\uD83D\uDD1C\uD83D\uDD1C I am on a ride right now. Will let you know when I am free! (${Random.alphanumeric.take(6).mkString})")
   }
+
+  def tweetAboutSearch() = {
+    twitter.createTweet(status =
+      s"🔎🔎🔎 There has been no available car for quite some time now. Nevertheless, I keep on searching. Stay tuned! (${Random.alphanumeric.take(6).mkString})")
+  }
+
+  def resetLastTweetTimer() =
+    lastTweetAt = Instant.now
 }
 
 class Supervisor extends Actor {
