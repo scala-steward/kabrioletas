@@ -79,7 +79,7 @@ class CabrioCheck extends Actor with ActorLogging {
       twitter.homeTimeline(count = 1).map(LastTweetAndCar(_, car)).pipeTo(self)
     case LastTweetAndCar(RatedData(_, Nil), None) =>
       log.info(s"No tweets and no car. Keep on searching...")
-      if (Duration.between(Instant.now, lastTweetAt).toDays > 1) {
+      if (Duration.between(Instant.now, lastTweetAt).toDays >= 1) {
         tweetAboutSearch().pipeTo(self)
       }
     case LastTweetAndCar(RatedData(_, Nil), Some(car)) =>
@@ -104,7 +104,7 @@ class CabrioCheck extends Actor with ActorLogging {
         tweetAboutNoCar().pipeTo(self)
       } else {
         log.info(s"No car and we know it!")
-        if (Duration.between(Instant.now, lastTweetAt).toDays > 1) {
+        if (Duration.between(Instant.now, lastTweetAt).toDays >= 1) {
           tweetAboutSearch().pipeTo(self)
         }
       }
