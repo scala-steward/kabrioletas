@@ -36,4 +36,4 @@ startYear := Some(2017)
 
 scalafmtOnCompile := true
 
-enablePlugins(AutomateHeaderPlugin, JavaAppPackaging, MicrositesPlugin, ScalafmtPlugin)
+enablePlugins(AutomateHeaderPlugin, JavaAppPackaging, MicrositesPlugin)
