@@ -33,7 +33,7 @@ import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe._
 
 import scala.concurrent.duration.{Duration => _, _}
-import scala.util.Random
+import scala.util.{Failure, Random}
 
 object CabrioCheck {
   case object DoTheCheck
@@ -51,8 +51,9 @@ class CabrioCheck extends Actor with ActorLogging {
   implicit val sys = context.system
   implicit val mat = ActorMaterializer()
 
-  val twitter               = TwitterRestClient()
-  final val OpenCageDataKey = context.system.settings.config.getString("opencagedata.key")
+  val twitter                 = TwitterRestClient()
+  final val OpenCageDataKey   = context.system.settings.config.getString("opencagedata.key")
+  final val CardModelToSearch = context.system.settings.config.getString("kabrioletas.model")
 
   var lastTweetAt: Instant = _
 
@@ -64,7 +65,7 @@ class CabrioCheck extends Actor with ActorLogging {
 
   def receive = {
     case DoTheCheck =>
-      log.info("Starting to look for a cabrio.")
+      log.info("Starting to look for a wanted car.")
       CityWasp.session.pipeTo(self)
     case session: Session => session.loginChallenge.pipeTo(self)
     case challenge: LoginChallenge =>
@@ -74,7 +75,7 @@ class CabrioCheck extends Actor with ActorLogging {
       log.info("Successfully logged in!")
       login.parkedCars.map(ParkedCars).pipeTo(self)
     case ParkedCars(cars) =>
-      val car = cars.find(_.brand.equalsIgnoreCase("porsche"))
+      val car = cars.find(_.model.equalsIgnoreCase(CardModelToSearch))
       log.info(s"Car search resulted in $car")
       twitter.homeTimeline(count = 1).map(LastTweetAndCar(_, car)).pipeTo(self)
     case LastTweetAndCar(RatedData(_, Nil), None) =>
@@ -116,6 +117,9 @@ class CabrioCheck extends Actor with ActorLogging {
       resetLastTweetTimer()
     case m =>
       log.error(s"Unhandled message $m")
+      m match {
+        case Failure(ex) => log.error(ex.getMessage)
+      }
   }
 
   def reverseGeocodeCarLocation(car: ParkedCar)(implicit sys: ActorSystem) = {
