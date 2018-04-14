@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 2m
+ * Copyright 2017 https://github.com/2m/kabrioletas/graphs/contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,7 +118,12 @@ class CabrioCheck extends Actor with ActorLogging {
     case m =>
       log.error(s"Unhandled message $m")
       m match {
-        case Failure(ex) => log.error(ex.getMessage)
+        case Failure(ex) =>
+          log.error(ex.getMessage)
+          ex.printStackTrace()
+        case akka.actor.Status.Failure(ex) =>
+          log.error(ex.getMessage)
+          ex.printStackTrace()
       }
   }
 
