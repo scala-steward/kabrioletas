@@ -7,7 +7,7 @@ jdk: oraclejdk8
 jobs:
   include:
     - stage: test
-      script: sbt test
+      script: sbt headerCheck scalafmtCheck test
     - stage: deploy
       script: sbt publish
       if: repo = 2m/kabrioletas
