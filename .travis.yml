@@ -4,6 +4,14 @@ scala: 2.12.5
 
 jdk: oraclejdk8
 
+jobs:
+  include:
+    - stage: test
+      script: sbt test
+    - stage: deploy
+      script: sbt publish
+      if: repo = 2m/kabrioletas
+
 before_cache:
   - find $HOME/.ivy2 -name "ivydata-*.properties" -print -delete
   - find $HOME/.sbt  -name "*.lock"               -print -delete
@@ -12,3 +20,10 @@ cache:
   directories:
     - $HOME/.ivy2/cache
     - $HOME/.sbt/boot
+
+env:
+  global:
+    # travis encrypt BINTRAY_USER=...
+    - secure: "p+UrSGw9u/4l8I3l3Fm9RkyzhxDA9dryr1PGby2rgnf3YSkrwBLIz8DWoxm9plfHeF/rBZA/p8PKlTSrWctIorjqYSmyTILwoqAiYWR0eoIyywEdQmnz6ZsxOCahAE825GlquhCSV2Hnc86BdAyabnBsYsGh7I8kEGZzkpEemghdaFnlVR/xeicpzBbqNHMJhT85Hj5fVF54ws+EiTD2YjlNl/cUFNwzUvHX4mVeEhUENH9XCqyMlI8gNoulBNhXKAv+qZ77A9lEW7/2ZXb6TGspyKCdSIDyR628c1i7J8QAxECyCe8r1L0XhNKWbW4O24ZDmLva3kTJ7rLFW9Uhr/Nbf+NDEa7pU2UFkjiagkFIu+7oiPgHbd/BZUOqntWrMxJ7BmDc+TulhEiHapsO4ISpZEmvZKixF69oV2YZfuiXVPq6/lIJe7yYQUJXBB6Wbnn9cbLjRDFIM8DXzaQvQaxPfhDC87ZeQbqtePEbUkGkBqI3Xy4JVHTlXCWSfPn35b4gYgBQI0VZHzje6C3pPPvK8Cc0wK7zGOA76HPaeMwwMYbEqa17+IekUNv4kJMoQ8cd8rQubMYYZ6qdunUsG4MPBG/5L12N6vIla3tWXhDJcl/bMa7DMOJ6GSV0nS1BBxnYNAsLkLOY6wcJFfAYntydIgZRHY4PMWFhPGZtcsg="
+    # travis encrypt BINTRAY_PASS=...
+    - secure: "lVQ5Ual2qiV0/wduglHupQh9FyvhJ4mYZIXfc7JRaz6biXOhuZF1iSd/RKBGj8NVN+8QlILkAlYKspYeZD7FMRlCLiqBQd+ag3eeXMxM9ITxEf2okPmUcXfWNZ5VI62JPAWAxgf4AJn3CZ1kbhu/KQGR7ba5/SoNvopB2WDNTk4bLZ6xIkBarqv/Dcd+0+BYwH3qRAi+SdftxdMLsh18TRQt4lDsb9vXO5ol6hLX8oCDYDM/AP7Z8xoemhp3ty4i19Oc4DW6u9APzcAuV873qUdVqE1RX0BfHStpHjVE5U8KLh7QFWlVhWT/6Hgv/d903mjJMciHM72GaqXOsh1pV2n4b+N1C/YPs/le9+e7CcuPxujgN6MEuCmc3nnYRM2foIff63vHJKzshl4cMihAy2Xgre0S/KvnupFVH5BYghubkdetMYNHBogvwLsNgsv/D/Z+40VwdoJB8ZgFRYzq2EEfyT5pkRA4kEIRj9Ui1NbtGSWunkRy6voG0GjLS5mTK+3ZNMok2rhVrCy6s9CttJSxYBFaKV3lDJ76D9mIAufJqf9QS262Y4lj8iCFKi9UU5QQC9cc9lWk9vC/kPNEvhE1F1j7Szd7IowMvIh+PXByIipxYbppl2HxDLrW5fxy6jX4ueQIVA4Z6gVi19VZUpR+Oia+k2SpvsF/JK1j+68="

@@ -33,6 +33,15 @@ libraryDependencies ++= Seq(
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 startYear := Some(2017)
+homepage := Some(url("https://github.com/2m/kabrioletas"))
+scmInfo := Some(ScmInfo(url("https://github.com/2m/kabrioletas"), "git@github.com:2m/kabrioletas.git"))
+developers += Developer("contributors",
+                        "Contributors",
+                        "https://gitter.im/2m/kabrioletas",
+                        url("https://github.com/2m/kabrioletas/graphs/contributors"))
+bintrayOrganization := Some("2m")
+bintrayRepository := (if (isSnapshot.value) "snapshots" else "maven")
+organizationName := "https://github.com/2m/kabrioletas/graphs/contributors"
 
 scalafmtOnCompile := true
 
