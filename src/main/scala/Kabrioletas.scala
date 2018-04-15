@@ -140,9 +140,16 @@ class CabrioCheck extends Actor with ActorLogging {
   def tweetAbout(carWithLocation: CarWithLocation) = {
     val CarWithLocation(car, location) = carWithLocation
 
+    val cityDescription = for {
+      suburb <- location.suburb.map(_ + ", ").orElse(Some(""))
+      city   <- location.city
+    } yield s"$suburb$city"
+
+    val locationDescription = cityDescription.orElse(location.town).map(location => s" in $location").getOrElse("")
+
     twitter.createTweet(
       status =
-        f"\uD83D\uDE95\uD83D\uDE95\uD83D\uDE95 Parked and ready for a new adventure in ${location.suburb}, ${location.city}. Pick me up! https://www.google.com/maps?q=${car.lat}%.6f,${car.lon}%.6f",
+        f"\uD83D\uDE95\uD83D\uDE95\uD83D\uDE95 Parked and ready for a new adventure$locationDescription. Pick me up! https://www.google.com/maps?q=${car.lat}%.6f,${car.lon}%.6f",
       latitude = Some(car.lat.toLong),
       longitude = Some(car.lon.toLong),
       display_coordinates = true
@@ -185,13 +192,14 @@ object Kabrioletas extends App {
 }
 
 object OpenCageData extends FailFastCirceSupport {
-  case class Location(suburb: String, city: String)
+  case class Location(suburb: Option[String], city: Option[String], town: Option[String])
 
   implicit val decodeLocation: Decoder[Location] = new Decoder[Location] {
     final def apply(c: HCursor): Decoder.Result[Location] =
       for {
-        suburb <- c.downField("results").downArray.first.downField("components").downField("suburb").as[String]
-        city   <- c.downField("results").downArray.first.downField("components").downField("city").as[String]
-      } yield Location(suburb, city)
+        suburb <- c.downField("results").downArray.first.downField("components").downField("suburb").as[Option[String]]
+        city   <- c.downField("results").downArray.first.downField("components").downField("city").as[Option[String]]
+        town   <- c.downField("results").downArray.first.downField("components").downField("town").as[Option[String]]
+      } yield Location(suburb, city, town)
   }
 }
