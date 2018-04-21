@@ -28,8 +28,15 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"   %% "akka-stream"     % "2.5.11",
   "com.typesafe.akka"   %% "akka-http"       % "10.1.1",
   "de.heikoseeberger"   %% "akka-http-circe" % "1.20.1",
-  "com.danielasfregola" %% "twitter4s"       % "5.5"
+  "com.danielasfregola" %% "twitter4s"       % "5.5",
+  "org.akka-js" %% "shocon" % "0.2.1",
 )
+
+excludeDependencies ++= Seq(
+  ExclusionRule("com.typesafe", "config")
+)
+
+//compile in Compile := (compile in Compile).dependsOn(shoconConcat).value
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 startYear := Some(2017)
@@ -45,4 +52,4 @@ organizationName := "https://github.com/2m/kabrioletas/graphs/contributors"
 
 scalafmtOnCompile := true
 
-enablePlugins(AutomateHeaderPlugin, JavaAppPackaging, MicrositesPlugin)
+enablePlugins(AutomateHeaderPlugin, JavaAppPackaging, MicrositesPlugin, ShoconPlugin)

@@ -29,6 +29,7 @@ import akka.stream.ActorMaterializer
 import citywasp.api._
 import com.danielasfregola.twitter4s.TwitterRestClient
 import com.danielasfregola.twitter4s.entities.{RatedData, Tweet}
+import com.typesafe.config.ConfigFactory
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe._
 
@@ -186,8 +187,11 @@ class Supervisor extends Actor {
 
 object Kabrioletas {
   def main(args: Array[String]): Unit = {
-    val cl = classOf[ActorSystem].getClassLoader
-    val sys = ActorSystem("Kabrioletas", classLoader = Some(cl))
+    //println("before")
+    val config = ConfigFactory.load()
+    println(config)
+
+    val sys = ActorSystem("Kabrioletas", config = Some(config))
     sys.actorOf(Props[Supervisor], "supervisor")
   }
 }
