@@ -186,7 +186,8 @@ class Supervisor extends Actor {
 
 object Kabrioletas {
   def main(args: Array[String]): Unit = {
-    val sys = ActorSystem("Kabrioletas")
+    val cl = classOf[ActorSystem].getClassLoader
+    val sys = ActorSystem("Kabrioletas", classLoader = Some(cl))
     sys.actorOf(Props[Supervisor], "supervisor")
   }
 }
