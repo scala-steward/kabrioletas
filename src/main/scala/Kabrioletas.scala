@@ -184,11 +184,11 @@ class Supervisor extends Actor {
   }
 }
 
-object Kabrioletas extends App {
-
-  val sys = ActorSystem("Kabrioletas")
-  sys.actorOf(Props[Supervisor], "supervisor")
-
+object Kabrioletas {
+  def main(args: Array[String]): Unit = {
+    val sys = ActorSystem("Kabrioletas")
+    sys.actorOf(Props[Supervisor], "supervisor")
+  }
 }
 
 object OpenCageData extends FailFastCirceSupport {
