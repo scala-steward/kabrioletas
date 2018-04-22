@@ -149,7 +149,7 @@ class CabrioCheck extends Actor with ActorLogging {
 
     twitter.createTweet(
       status =
-        f"\uD83D\uDE95\uD83D\uDE95\uD83D\uDE95 Parked and ready for a new adventure$locationDescription. Pick me up! https://www.google.com/maps?q=${car.lat}%.6f,${car.lon}%.6f",
+        f"\uD83D\uDE95\uD83D\uDE95\uD83D\uDE95 Parked and ready for a new adventure$locationDescription. Pick me up! https://www.google.com/maps?q=${car.lat}%.6f,${car.lon}%.6f ($randomMarker)",
       latitude = Some(car.lat.toLong),
       longitude = Some(car.lon.toLong),
       display_coordinates = true
@@ -158,13 +158,16 @@ class CabrioCheck extends Actor with ActorLogging {
 
   def tweetAboutNoCar() = {
     twitter.createTweet(status =
-      s"\uD83D\uDD1C\uD83D\uDD1C\uD83D\uDD1C I am on a ride right now. Will let you know when I am free! (${Random.alphanumeric.take(6).mkString})")
+      s"\uD83D\uDD1C\uD83D\uDD1C\uD83D\uDD1C I am on a ride right now. Will let you know when I am free! ($randomMarker)")
   }
 
   def tweetAboutSearch() = {
     twitter.createTweet(status =
-      s"🔎🔎🔎 There has been no available car for quite some time now. Nevertheless, I keep on searching. Stay tuned! (${Random.alphanumeric.take(6).mkString})")
+      s"🔎🔎🔎 There has been no available car for quite some time now. Nevertheless, I keep on searching. Stay tuned! ($randomMarker)")
   }
+
+  def randomMarker =
+    Random.alphanumeric.take(6).mkString
 
   def resetLastTweetTimer() =
     lastTweetAt = Instant.now
