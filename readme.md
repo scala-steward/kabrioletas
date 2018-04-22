@@ -28,7 +28,7 @@ Copy [`application.conf`](src/main/resources/application.conf) to `kabrioletas.c
 coursier launch \
   --repository bintray:2m/maven \
   --main lt.dvim.citywasp.kabrioletas.Kabrioletas \
-  lt.dvim.citywasp:kabrioletas_2.12:1.3 \
+  lt.dvim.citywasp:kabrioletas_2.12:1.4 \
   -- \
   -Dconfig.file=kabrioletas.conf
 ```
