@@ -37,23 +37,24 @@ import scala.util.{Failure, Random}
 
 object CabrioCheck {
   case object DoTheCheck
-  case class ParkedCars(cars: Seq[ParkedCar])
-  case class LastTweetAndCar(tweets: RatedData[Seq[Tweet]], car: Option[ParkedCar])
-  case class CarWithLocation(car: ParkedCar, location: OpenCageData.Location)
+  case class ParkedCars(cars: Seq[Car])
+  case class LastTweetAndCar(tweets: List[Tweet], car: Option[Car])
+  case class CarWithLocation(car: Car, location: OpenCageData.Location)
 }
 
 class CabrioCheck extends Actor with ActorLogging {
   import CabrioCheck._
   import context.dispatcher
 
-  val config       = context.system.settings.config.getConfig("citywasp")
-  implicit val cw  = RemoteCityWasp(config)
   implicit val sys = context.system
   implicit val mat = ActorMaterializer()
 
-  val twitter                 = TwitterRestClient()
-  final val OpenCageDataKey   = context.system.settings.config.getString("opencagedata.key")
-  final val CardModelToSearch = context.system.settings.config.getString("kabrioletas.model")
+  val config      = context.system.settings.config.getConfig("citywasp")
+  implicit val cw = RemoteCityWasp(config)
+
+  val twitter               = TwitterRestClient()
+  final val OpenCageDataKey = context.system.settings.config.getString("opencagedata.key")
+  final val CardIdToSearch  = context.system.settings.config.getInt("kabrioletas.car-id")
 
   var lastTweetAt: Instant = _
 
@@ -66,27 +67,23 @@ class CabrioCheck extends Actor with ActorLogging {
   def receive = {
     case DoTheCheck =>
       log.info("Starting to look for a wanted car.")
-      CityWasp.session.pipeTo(self)
-    case session: Session => session.loginChallenge.pipeTo(self)
-    case challenge: LoginChallenge =>
-      log.info("Got login challenge. Ready to go!")
-      challenge.login.pipeTo(self)
+      cw.login.pipeTo(self)
     case login: LoggedIn =>
       log.info("Successfully logged in!")
-      login.parkedCars.map(ParkedCars).pipeTo(self)
+      login.availableCars.map(ParkedCars).pipeTo(self)
     case ParkedCars(cars) =>
-      val car = cars.find(_.model.equalsIgnoreCase(CardModelToSearch))
+      val car = cars.find(_.id == CardIdToSearch)
       log.info(s"Car search resulted in $car")
-      twitter.homeTimeline(count = 1).map(LastTweetAndCar(_, car)).pipeTo(self)
-    case LastTweetAndCar(RatedData(_, Nil), None) =>
+      twitter.homeTimeline(count = 1).map(timeline => LastTweetAndCar(timeline.data.toList, car)).pipeTo(self)
+    case LastTweetAndCar(Nil, None) =>
       log.info(s"No tweets and no car. Keep on searching...")
       if (Duration.between(Instant.now, lastTweetAt).toDays.abs >= 1) {
         tweetAboutSearch().pipeTo(self)
       }
-    case LastTweetAndCar(RatedData(_, Nil), Some(car)) =>
+    case LastTweetAndCar(Nil, Some(car)) =>
       log.info(s"Found a car. It is gonna be a great first tweet!")
       reverseGeocodeCarLocation(car).map(CarWithLocation(car, _)).pipeTo(self)
-    case LastTweetAndCar(RatedData(_, tweet :: _), Some(car)) =>
+    case LastTweetAndCar(tweet :: _, Some(car)) =>
       if (!tweet.text.contains("ready")) {
         log.info(
           s"Found a car [$car] and last tweet was about taken car [${tweet.text}]. Let's tell the world about the car we just found!")
@@ -99,7 +96,7 @@ class CabrioCheck extends Actor with ActorLogging {
       } else {
         log.info(s"Found a car [$car] and last tweet was about a parked car [${tweet.text}] at the same place.")
       }
-    case LastTweetAndCar(RatedData(_, tweet :: _), None) =>
+    case LastTweetAndCar(tweet :: _, None) =>
       if (tweet.text.contains("ready")) {
         log.info(s"No car and last tweet was about a parked car [${tweet.text}]. Tweet about taken car.")
         tweetAboutNoCar().pipeTo(self)
@@ -127,7 +124,7 @@ class CabrioCheck extends Actor with ActorLogging {
       }
   }
 
-  def reverseGeocodeCarLocation(car: ParkedCar)(implicit sys: ActorSystem) = {
+  def reverseGeocodeCarLocation(car: Car)(implicit sys: ActorSystem) = {
     import OpenCageData._
 
     Http()
