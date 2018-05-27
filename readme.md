@@ -27,10 +27,9 @@ Copy [`application.conf`](src/main/resources/application.conf) to `kabrioletas.c
 ```bash
 coursier launch \
   --repository bintray:2m/maven \
-  --main lt.dvim.citywasp.kabrioletas.Kabrioletas \
-  lt.dvim.citywasp:kabrioletas_2.12:1.4 \
+  lt.dvim.citywasp:kabrioletas_2.12:1.5 \
   -- \
-  -Dconfig.file=kabrioletas.conf
+  -J-Dconfig.file=kabrioletas.conf
 ```
 
 ### Docker
