@@ -1,7 +1,7 @@
 # Kabrioletas [![bintray-badge][]][bintray] [![travis-badge][]][travis] [![gitter-badge][]][gitter]
 
 [bintray]:               https://bintray.com/2m/maven/kabrioletas
-[bintray-badge]:         https://img.shields.io/bintray/v/2m/maven/kabrioletas.svg?label=kabrioletas
+[bintray-badge]:         https://api.bintray.com/packages/2m/maven/kabrioletas/images/download.svg
 [travis]:                https://travis-ci.org/2m/kabrioletas
 [travis-badge]:          https://travis-ci.org/2m/kabrioletas.svg?branch=master
 [gitter]:                https://gitter.im/2m/kabrioletas
