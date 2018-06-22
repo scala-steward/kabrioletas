@@ -8,9 +8,14 @@ jobs:
   include:
     - stage: test
       script: sbt headerCheck scalafmtSbtCheck scalafmtCheck test
-    - stage: deploy
+    - stage: publish
       script: sbt publish
-      if: repo = 2m/kabrioletas
+      
+stages:  
+  - name: test # runs on master commits and PRs
+    if: NOT tag =~ ^v
+  - name: publish # runs on main repo master commits or version-tagged commits
+    if: repo = 2m/kabrioletas AND ( ( branch = master AND type = push ) OR tag =~ ^v )
 
 before_cache:
   - find $HOME/.ivy2 -name "ivydata-*.properties" -print -delete
