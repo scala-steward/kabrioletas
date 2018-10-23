@@ -56,7 +56,7 @@ class CabrioCheck extends Actor with ActorLogging {
   val twitter               = TwitterRestClient()
   final val OpenCageDataKey = context.system.settings.config.getString("opencagedata.key")
   final val CardIdToSearch  = context.system.settings.config.getInt("kabrioletas.car-id")
-  final val PollInterval    = context.system.settings.config.getDuration("kabrioletas.poll-duration").toScala
+  final val PollInterval    = context.system.settings.config.getDuration("kabrioletas.poll-interval").toScala
 
   var lastTweetAt: Instant = _
 
