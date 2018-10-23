@@ -32,6 +32,7 @@ import com.danielasfregola.twitter4s.entities.{RatedData, Tweet}
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe._
 
+import scala.compat.java8.DurationConverters._
 import scala.concurrent.duration.{Duration => _, _}
 import scala.util.{Failure, Random}
 
@@ -55,10 +56,11 @@ class CabrioCheck extends Actor with ActorLogging {
   val twitter               = TwitterRestClient()
   final val OpenCageDataKey = context.system.settings.config.getString("opencagedata.key")
   final val CardIdToSearch  = context.system.settings.config.getInt("kabrioletas.car-id")
+  final val PollInterval    = context.system.settings.config.getDuration("kabrioletas.poll-duration").toScala
 
   var lastTweetAt: Instant = _
 
-  context.system.scheduler.schedule(0.seconds, 5.minutes, self, DoTheCheck)
+  context.system.scheduler.schedule(0.seconds, PollInterval, self, DoTheCheck)
 
   override def preStart() = {
     resetLastTweetTimer()
