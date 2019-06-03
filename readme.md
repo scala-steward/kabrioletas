@@ -10,13 +10,19 @@
 [kabrioletas-badge]:     https://img.shields.io/twitter/follow/kabrioletas.svg?style=social&label=Follow
 [fijatas]:               https://twitter.com/fijatas
 [fijatas-badge]:         https://img.shields.io/twitter/follow/fijatas.svg?style=social&label=Follow
+[tautovezis]:            https://twitter.com/tautovezis
+[tautovezis-badge]:      https://img.shields.io/twitter/follow/tautovezis.svg?style=social&label=Follow
+[pirmukas]:              https://twitter.com/pirmukas
+[pirmukas-badge]:        https://img.shields.io/twitter/follow/pirmukas.svg?style=social&label=Follow
 
 Kabrioletas is a twitter bot that lets you know when you can get that sweet roofless ride.
 
-There are currently two twitter accounts that are running this bot:
+The following twitter accounts have been or still are running this bot:
 
-* [![kabrioletas-badge][]][kabrioletas] [@kabrioletas](twitter.com/kabrioletas)
-* [![fijatas-badge][]][fijatas] [@fijatas](twitter.com/fijatas)
+* [![kabrioletas-badge][]][kabrioletas] [@kabrioletas](https://twitter.com/kabrioletas)
+* [![fijatas-badge][]][fijatas] [@fijatas](https://twitter.com/fijatas)
+* [![tautovezis-badge][]][tautovezis] [@tautovezis](https://twitter.com/tautovezis)
+* [![pirmukas-badge][]][pirmukas] [@pirmukas](https://twitter.com/pirmukas)
 
 ## Running
 
@@ -27,7 +33,7 @@ Copy [`application.conf`](src/main/resources/application.conf) to `kabrioletas.c
 ```bash
 coursier launch \
   --repository bintray:2m/maven \
-  lt.dvim.citywasp:kabrioletas_2.12:1.5 \
+  lt.dvim.citywasp:kabrioletas_2.12:1.7 \
   -- \
   -J-Dconfig.file=kabrioletas.conf
 ```
