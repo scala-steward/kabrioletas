@@ -50,13 +50,13 @@ class CabrioCheck extends Actor with ActorLogging {
   implicit val sys = context.system
   implicit val mat = ActorMaterializer()
 
-  val config      = context.system.settings.config.getConfig("citywasp")
+  val config = context.system.settings.config.getConfig("citywasp")
   implicit val cw = RemoteCityWasp(config)
 
-  val twitter               = TwitterRestClient()
+  val twitter = TwitterRestClient()
   final val OpenCageDataKey = context.system.settings.config.getString("opencagedata.key")
-  final val CardIdToSearch  = context.system.settings.config.getInt("kabrioletas.car-id")
-  final val PollInterval    = context.system.settings.config.getDuration("kabrioletas.poll-interval").toScala
+  final val CardIdToSearch = context.system.settings.config.getInt("kabrioletas.car-id")
+  final val PollInterval = context.system.settings.config.getDuration("kabrioletas.poll-interval").toScala
 
   var lastTweetAt: Instant = _
 
@@ -88,12 +88,14 @@ class CabrioCheck extends Actor with ActorLogging {
     case LastTweetAndCar(tweet :: _, Some(car)) =>
       if (!tweet.text.contains("ready")) {
         log.info(
-          s"Found a car [$car] and last tweet was about taken car [${tweet.text}]. Let's tell the world about the car we just found!")
+          s"Found a car [$car] and last tweet was about taken car [${tweet.text}]. Let's tell the world about the car we just found!"
+        )
         reverseGeocodeCarLocation(car).map(CarWithLocation(car, _)).pipeTo(self)
       } else if (tweet.coordinates.isDefined && math.abs(tweet.coordinates.get.coordinates.head - car.lon) > 0.001 && math
                    .abs(tweet.coordinates.get.coordinates.tail.head - car.lat) > 0.001) {
         log.info(
-          s"Found a car [$car] and last tweet was about a parked car [${tweet.text}], but it was on a different place. Let tell the world about the car we just found!")
+          s"Found a car [$car] and last tweet was about a parked car [${tweet.text}], but it was on a different place. Let tell the world about the car we just found!"
+        )
         reverseGeocodeCarLocation(car).map(CarWithLocation(car, _)).pipeTo(self)
       } else {
         log.info(s"Found a car [$car] and last tweet was about a parked car [${tweet.text}] at the same place.")
@@ -131,8 +133,11 @@ class CabrioCheck extends Actor with ActorLogging {
 
     Http()
       .singleRequest(
-        HttpRequest(uri = Uri("http://api.opencagedata.com/geocode/v1/json").withQuery(
-          Query("q" -> s"${car.lat},${car.lon}", "key" -> OpenCageDataKey))))
+        HttpRequest(
+          uri = Uri("http://api.opencagedata.com/geocode/v1/json")
+            .withQuery(Query("q" -> s"${car.lat},${car.lon}", "key" -> OpenCageDataKey))
+        )
+      )
       .flatMap(resp => Unmarshal(resp.entity).to[Location])
   }
 
@@ -141,7 +146,7 @@ class CabrioCheck extends Actor with ActorLogging {
 
     val cityDescription = for {
       suburb <- location.suburb.map(_ + ", ").orElse(Some(""))
-      city   <- location.city
+      city <- location.city
     } yield s"$suburb$city"
 
     val locationDescription = cityDescription.orElse(location.town).map(location => s" in $location").getOrElse("")
@@ -156,13 +161,17 @@ class CabrioCheck extends Actor with ActorLogging {
   }
 
   def tweetAboutNoCar() = {
-    twitter.createTweet(status =
-      s"\uD83D\uDD1C\uD83D\uDD1C\uD83D\uDD1C I am on a ride right now. Will let you know when I am free! ($randomMarker)")
+    twitter.createTweet(
+      status =
+        s"\uD83D\uDD1C\uD83D\uDD1C\uD83D\uDD1C I am on a ride right now. Will let you know when I am free! ($randomMarker)"
+    )
   }
 
   def tweetAboutSearch() = {
-    twitter.createTweet(status =
-      s"🔎🔎🔎 There has been no available car for quite some time now. Nevertheless, I keep on searching. Stay tuned! ($randomMarker)")
+    twitter.createTweet(
+      status =
+        s"🔎🔎🔎 There has been no available car for quite some time now. Nevertheless, I keep on searching. Stay tuned! ($randomMarker)"
+    )
   }
 
   def randomMarker =
@@ -200,8 +209,8 @@ object OpenCageData extends FailFastCirceSupport {
     final def apply(c: HCursor): Decoder.Result[Location] =
       for {
         suburb <- c.downField("results").downArray.first.downField("components").downField("suburb").as[Option[String]]
-        city   <- c.downField("results").downArray.first.downField("components").downField("city").as[Option[String]]
-        town   <- c.downField("results").downArray.first.downField("components").downField("town").as[Option[String]]
+        city <- c.downField("results").downArray.first.downField("components").downField("city").as[Option[String]]
+        town <- c.downField("results").downArray.first.downField("components").downField("town").as[Option[String]]
       } yield Location(suburb, city, town)
   }
 }

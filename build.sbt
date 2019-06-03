@@ -25,10 +25,10 @@ micrositePalette := Map(
 resolvers += Resolver.bintrayRepo("2m", "maven")
 libraryDependencies ++= Seq(
   "citywasp"               %% "citywasp-api"       % "1.2",
-  "com.typesafe.akka"      %% "akka-stream"        % "2.5.17",
-  "com.typesafe.akka"      %% "akka-http"          % "10.1.5",
-  "de.heikoseeberger"      %% "akka-http-circe"    % "1.22.0",
-  "com.danielasfregola"    %% "twitter4s"          % "5.5",
+  "com.typesafe.akka"      %% "akka-stream"        % "2.5.23",
+  "com.typesafe.akka"      %% "akka-http"          % "10.1.8",
+  "de.heikoseeberger"      %% "akka-http-circe"    % "1.25.2",
+  "com.danielasfregola"    %% "twitter4s"          % "6.1",
   "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.0",
 )
 
