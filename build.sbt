@@ -26,7 +26,7 @@ resolvers += Resolver.bintrayRepo("2m", "maven")
 libraryDependencies ++= Seq(
   "citywasp" %% "citywasp-api" % "1.2",
   "com.typesafe.akka" %% "akka-stream" % "2.5.25",
-  "com.typesafe.akka" %% "akka-http" % "10.1.9",
+  "com.typesafe.akka" %% "akka-http" % "10.1.10",
   "de.heikoseeberger" %% "akka-http-circe" % "1.28.0",
   "com.danielasfregola" %% "twitter4s" % "6.1",
   "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.0"
