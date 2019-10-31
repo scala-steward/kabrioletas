@@ -28,7 +28,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream" % "2.5.26",
   "com.typesafe.akka" %% "akka-http" % "10.1.10",
   "de.heikoseeberger" %% "akka-http-circe" % "1.29.1",
-  "com.danielasfregola" %% "twitter4s" % "6.1",
+  "com.danielasfregola" %% "twitter4s" % "6.2",
   "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.0"
 )
 
