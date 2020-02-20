@@ -29,7 +29,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http" % "10.1.11",
   "de.heikoseeberger" %% "akka-http-circe" % "1.31.0",
   "com.danielasfregola" %% "twitter4s" % "6.2",
-  "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.0"
+  "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.1"
 )
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
