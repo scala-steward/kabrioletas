@@ -91,8 +91,10 @@ class CabrioCheck extends Actor with ActorLogging {
           s"Found a car [$car] and last tweet was about taken car [${tweet.text}]. Let's tell the world about the car we just found!"
         )
         reverseGeocodeCarLocation(car).map(CarWithLocation(car, _)).pipeTo(self)
-      } else if (tweet.coordinates.isDefined && math.abs(tweet.coordinates.get.coordinates.head - car.lon) > 0.001 && math
-                   .abs(tweet.coordinates.get.coordinates.tail.head - car.lat) > 0.001) {
+      } else if (
+        tweet.coordinates.isDefined && math.abs(tweet.coordinates.get.coordinates.head - car.lon) > 0.001 && math
+          .abs(tweet.coordinates.get.coordinates.tail.head - car.lat) > 0.001
+      ) {
         log.info(
           s"Found a car [$car] and last tweet was about a parked car [${tweet.text}], but it was on a different place. Let tell the world about the car we just found!"
         )
@@ -182,9 +184,10 @@ class CabrioCheck extends Actor with ActorLogging {
 }
 
 class Supervisor extends Actor {
-  override def supervisorStrategy = OneForOneStrategy(loggingEnabled = true) {
-    case t => Resume
-  }
+  override def supervisorStrategy =
+    OneForOneStrategy(loggingEnabled = true) {
+      case t => Resume
+    }
 
   override def preStart() = {
     context.actorOf(Props[CabrioCheck], "cabrioCheck")
