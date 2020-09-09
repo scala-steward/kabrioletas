@@ -185,16 +185,15 @@ class CabrioCheck extends Actor with ActorLogging {
 
 class Supervisor extends Actor {
   override def supervisorStrategy =
-    OneForOneStrategy(loggingEnabled = true) {
-      case t => Resume
+    OneForOneStrategy(loggingEnabled = true) { case t =>
+      Resume
     }
 
   override def preStart() = {
     context.actorOf(Props[CabrioCheck], "cabrioCheck")
   }
 
-  def receive = {
-    case _ =>
+  def receive = { case _ =>
   }
 }
 
