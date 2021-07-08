@@ -27,7 +27,7 @@ libraryDependencies ++= Seq(
   "citywasp" %% "citywasp-api" % "1.2",
   "com.typesafe.akka" %% "akka-stream" % "2.6.14",
   "com.typesafe.akka" %% "akka-http" % "10.2.4",
-  "de.heikoseeberger" %% "akka-http-circe" % "1.36.0",
+  "de.heikoseeberger" %% "akka-http-circe" % "1.37.0",
   "com.danielasfregola" %% "twitter4s" % "7.0",
   "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.1"
 )
