@@ -22,14 +22,15 @@ micrositePalette := Map(
   "white-color" -> "#FFFFFF"
 )
 
-resolvers += Resolver.bintrayRepo("2m", "maven")
+scalaVersion := "2.13.6"
 libraryDependencies ++= Seq(
-  "citywasp" %% "citywasp-api" % "1.2",
-  "com.typesafe.akka" %% "akka-stream" % "2.6.14",
-  "com.typesafe.akka" %% "akka-http" % "10.2.4",
-  "de.heikoseeberger" %% "akka-http-circe" % "1.36.0",
-  "com.danielasfregola" %% "twitter4s" % "7.0",
-  "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.1"
+  "lt.dvim.citywasp"              %% "citywasp-api"       % "2.0.2",
+  "com.typesafe.akka"             %% "akka-stream"        % "2.6.15",
+  "com.typesafe.akka"             %% "akka-http"          % "10.2.6",
+  "de.heikoseeberger"             %% "akka-http-circe"    % "1.37.0",
+  "com.softwaremill.sttp.client3" %% "akka-http-backend"  % "3.3.13",
+  "com.danielasfregola"           %% "twitter4s"          % "7.0",
+  "org.scala-lang.modules"        %% "scala-java8-compat" % "0.9.0"
 )
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
@@ -42,10 +43,12 @@ developers += Developer(
   "https://gitter.im/2m/kabrioletas",
   url("https://github.com/2m/kabrioletas/graphs/contributors")
 )
-bintrayOrganization := Some("2m")
-bintrayRepository := (if (isSnapshot.value) "snapshots" else "maven")
 organizationName := "https://github.com/2m/kabrioletas/graphs/contributors"
 
 scalafmtOnCompile := true
+scalafixOnCompile := true
+ThisBuild / scalafixDependencies ++= Seq(
+  "com.nequissimus" %% "sort-imports" % "0.5.5"
+)
 
 enablePlugins(AutomateHeaderPlugin, JavaAppPackaging, MicrositesPlugin)
