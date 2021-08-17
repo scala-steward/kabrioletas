@@ -12,6 +12,8 @@ libraryDependencies ++= Seq(
   "org.scala-lang.modules"        %% "scala-java8-compat" % "0.9.1"
 )
 
+sonatypeProfileName := "lt.dvim"
+
 inThisBuild(
   Seq(
     licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
@@ -30,7 +32,6 @@ inThisBuild(
     scalafixDependencies ++= Seq(
       "com.nequissimus" %% "sort-imports" % "0.5.5"
     ),
-    sonatypeProfileName := "lt.dvim",
     versionScheme := Some("semver-spec")
   )
 )
