@@ -1,9 +1,7 @@
-# Kabrioletas [![bintray-badge][]][bintray] [![travis-badge][]][travis] [![gitter-badge][]][gitter]
+# Kabrioletas [![ci-badge][]][ci] [![gitter-badge][]][gitter]
 
-[bintray]:               https://bintray.com/2m/maven/kabrioletas
-[bintray-badge]:         https://api.bintray.com/packages/2m/maven/kabrioletas/images/download.svg
-[travis]:                https://travis-ci.org/2m/kabrioletas
-[travis-badge]:          https://travis-ci.org/2m/kabrioletas.svg?branch=master
+[ci]:                    https://github.com/2m/citywasp-api/actions
+[ci-badge]:              https://github.com/2m/citywasp-api/workflows/ci/badge.svg
 [gitter]:                https://gitter.im/2m/kabrioletas
 [gitter-badge]:          https://badges.gitter.im/2m/kabrioletas.svg
 [kabrioletas]:           https://twitter.com/kabrioletas

@@ -30,7 +30,8 @@ inThisBuild(
     scalafixDependencies ++= Seq(
       "com.nequissimus" %% "sort-imports" % "0.5.5"
     ),
-    sonatypeProfileName := "lt.dvim"
+    sonatypeProfileName := "lt.dvim",
+    versionScheme := Some("semver-spec")
   )
 )
 
