@@ -1,0 +1,42 @@
+---
+name: ci
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+    - main
+  pull_request:
+
+jobs:
+  checks:
+    name: Format and style checks
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2.3.4
+    - uses: coursier/cache-action@v6
+    - uses: laughedelic/coursier-setup@v1
+      with:
+        jvm: adopt:14
+        apps: sbtn
+    - run: sbtn scalafixAll --check
+    - run: sbtn scalafmtCheckAll
+    - run: sbtn scalafmtSbtCheck
+    - run: sbtn headerCheckAll
+    - name: yaml-lint
+      uses: ibiqlik/action-yamllint@v3
+
+  test:
+    name: Compile and test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2.3.4
+    - uses: coursier/cache-action@v6
+    - uses: laughedelic/coursier-setup@v1
+      with:
+        jvm: adopt:14
+        apps: sbtn
+    - run: sbtn test

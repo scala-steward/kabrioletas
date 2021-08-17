@@ -1,18 +1,9 @@
 name-template: '$NEXT_PATCH_VERSION'
 tag-template: 'v$NEXT_PATCH_VERSION'
-categories:
-  - title: ':rocket: Features'
-    label: 'enhancement'
-  - title: ':bug: Bug Fixes'
-    label: 'bug'
-  - title: ':wrench: Build'
-    label: 'build'
-  - title: ':arrow_up: Dependencies'
-    label: 'dependency-change'
-
-change-template: '- $TITLE (#$NUMBER) by @$AUTHOR'
-
 template: |
-  ## Changes
+  ## What’s Changed
 
   $CHANGES
+
+exclude-labels:
+- 'dependencies'
