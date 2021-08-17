@@ -24,7 +24,7 @@ micrositePalette := Map(
 
 scalaVersion := "2.13.6"
 libraryDependencies ++= Seq(
-  "lt.dvim.citywasp"              %% "citywasp-api"       % "2.0.2",
+  "lt.dvim.citywasp"              %% "citywasp-api"       % "2.0.3",
   "com.typesafe.akka"             %% "akka-stream"        % "2.6.15",
   "com.typesafe.akka"             %% "akka-http"          % "10.2.6",
   "de.heikoseeberger"             %% "akka-http-circe"    % "1.37.0",
