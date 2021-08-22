@@ -18,10 +18,8 @@ package lt.dvim.citywasp.kabrioletas
 
 import java.time.{Duration, Instant}
 
-import scala.compat.java8.DurationConverters._
 import scala.concurrent.Future
 import scala.concurrent.duration.{Duration => _, _}
-import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Random}
 
 import akka.actor.SupervisorStrategy.Resume
@@ -36,8 +34,6 @@ import cats.implicits._
 import com.danielasfregola.twitter4s.TwitterRestClient
 import com.danielasfregola.twitter4s.entities.Tweet
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
-import eu.timepit.refined._
-import eu.timepit.refined.auto._
 import io.circe._
 import sttp.client3.akkahttp.AkkaHttpBackend
 import sttp.model.{Uri => SttpUri}
@@ -55,30 +51,17 @@ object CabrioCheck {
   case class CarWithLocation(car: Car, location: OpenCageData.Location)
 }
 
-class CabrioCheck extends Actor with ActorLogging {
+class CabrioCheck(config: Kabrioletas) extends Actor with ActorLogging {
   import CabrioCheck._
   import context.dispatcher
 
   implicit val sys = context.system
   val backend = AkkaHttpBackend.usingActorSystem(sys)
-
-  val twitter = TwitterRestClient()
-
-  final val DryRun = context.system.settings.config.getBoolean("dry-run")
-  final val CitywaspAppVersion = {
-    val str = context.system.settings.config.getString("citywasp.app-version")
-    val refined: Either[String, AppVersion] = refineV(str)
-    refined.getOrElse(throw new Exception(s"unable to parse [$str] to a version"))
-  }
-  final val CitywaspUris =
-    context.system.settings.config.getStringList("citywasp.uris").asScala.toList.map(SttpUri.unsafeParse)
-  final val OpenCageDataKey = context.system.settings.config.getString("opencagedata.key")
-  final val ServiceIdToSearch = context.system.settings.config.getInt("kabrioletas.service-id")
-  final val PollInterval = context.system.settings.config.getDuration("kabrioletas.poll-interval").toScala
+  val twitter = TwitterRestClient(config.twitter.consumer, config.twitter.access)
 
   var lastTweetAt: Instant = _
 
-  context.system.scheduler.scheduleAtFixedRate(0.seconds, PollInterval, self, DoTheCheck)
+  context.system.scheduler.scheduleAtFixedRate(0.seconds, config.pollInterval, self, DoTheCheck)
 
   override def preStart() =
     resetLastTweetTimer()
@@ -90,7 +73,7 @@ class CabrioCheck extends Actor with ActorLogging {
       ()
     case ParkedCars(cars) =>
       log.info(s"Currently total ${cars.size} cars available.")
-      val car = cars.find(_.serviceId == ServiceIdToSearch)
+      val car = cars.find(_.serviceId == config.serviceId)
       log.info(s"Car search resulted in $car")
       twitter.homeTimeline(count = 1).map(timeline => LastTweetAndCar(timeline.data.toList, car)).pipeTo(self)
       ()
@@ -156,7 +139,7 @@ class CabrioCheck extends Actor with ActorLogging {
   }
 
   def allCars() =
-    CitywaspUris.map(cars(CitywaspAppVersion)).combineAll.map(ParkedCars.apply)
+    config.backendUris.map(cars(config.appVersion)).combineAll.map(ParkedCars.apply)
 
   def cars(appVersion: AppVersion)(uri: SttpUri) = {
     val params = Params.default.copy(appVersion = appVersion, country = Country.fromUri(uri))
@@ -171,7 +154,7 @@ class CabrioCheck extends Actor with ActorLogging {
       .singleRequest(
         HttpRequest(
           uri = Uri("http://api.opencagedata.com/geocode/v1/json")
-            .withQuery(Query("q" -> s"${car.lat},${car.long}", "key" -> OpenCageDataKey))
+            .withQuery(Query("q" -> s"${car.lat},${car.long}", "key" -> config.openCageDataKey))
         )
       )
       .flatMap(resp => Unmarshal(resp.entity).to[Location])
@@ -189,7 +172,7 @@ class CabrioCheck extends Actor with ActorLogging {
     val tweet =
       f"\uD83D\uDE95\uD83D\uDE95\uD83D\uDE95 Parked and ready for a new adventure$locationDescription. Pick me up! https://www.google.com/maps?q=${car.lat}%.6f,${car.long}%.6f ($randomMarker)"
 
-    if (DryRun) {
+    if (!config.realRun) {
       log.info(s"Would tweet: $tweet")
     } else {
       twitter.createTweet(
@@ -221,14 +204,14 @@ class CabrioCheck extends Actor with ActorLogging {
     lastTweetAt = Instant.now
 }
 
-class Supervisor extends Actor {
+class Supervisor(config: Kabrioletas) extends Actor {
   override def supervisorStrategy =
     OneForOneStrategy(loggingEnabled = true) { case _ =>
       Resume
     }
 
   override def preStart() = {
-    context.actorOf(Props[CabrioCheck](), "cabrioCheck")
+    context.actorOf(Props(new CabrioCheck(config)), "cabrioCheck")
     ()
   }
 
@@ -236,9 +219,12 @@ class Supervisor extends Actor {
   }
 }
 
-object Kabrioletas extends App {
-  val sys = ActorSystem("Kabrioletas")
-  sys.actorOf(Props[Supervisor](), "supervisor")
+object Supervisor {
+  def run(config: Kabrioletas) = {
+    val sys = ActorSystem("Kabrioletas")
+    sys.actorOf(Props(new Supervisor(config)), "supervisor")
+    sys.whenTerminated
+  }
 }
 
 object OpenCageData extends FailFastCirceSupport {

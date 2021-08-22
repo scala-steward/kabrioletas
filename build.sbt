@@ -9,10 +9,25 @@ libraryDependencies ++= Seq(
   "de.heikoseeberger"             %% "akka-http-circe"    % "1.37.0",
   "com.softwaremill.sttp.client3" %% "akka-http-backend"  % "3.3.13",
   "com.danielasfregola"           %% "twitter4s"          % "7.0",
-  "org.scala-lang.modules"        %% "scala-java8-compat" % "1.0.0"
+  "org.scala-lang.modules"        %% "scala-java8-compat" % "1.0.0",
+  "org.scalameta"                 %% "moped"              % "0.1.9"
 )
 
 sonatypeProfileName := "lt.dvim"
+
+buildInfoKeys := Seq[BuildInfoKey](version)
+buildInfoPackage := "lt.dvim.citywasp.kabrioletas"
+
+nativeImageOptions ++= List(
+  "--verbose",
+  "--no-fallback",
+  "--initialize-at-build-time",
+  "--allow-incomplete-classpath",
+  "--report-unsupported-elements-at-runtime",
+  "--initialize-at-run-time=scala.util.Random$"
+)
+nativeImageVersion := "21.2.0"
+nativeImageAgentOutputDir := (Compile / resourceDirectory).value / "META-INF" / "native-image" / organization.value / name.value
 
 inThisBuild(
   Seq(
@@ -53,4 +68,4 @@ micrositePalette := Map(
   "white-color" -> "#FFFFFF"
 )
 
-enablePlugins(AutomateHeaderPlugin, JavaAppPackaging, MicrositesPlugin)
+enablePlugins(AutomateHeaderPlugin, JavaAppPackaging, MicrositesPlugin, BuildInfoPlugin, NativeImagePlugin)
