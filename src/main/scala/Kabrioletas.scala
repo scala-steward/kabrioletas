@@ -185,17 +185,31 @@ class CabrioCheck(config: Kabrioletas) extends Actor with ActorLogging {
     Future.successful(Tweeted)
   }
 
-  def tweetAboutNoCar() =
-    twitter.createTweet(
-      status =
-        s"\uD83D\uDD1C\uD83D\uDD1C\uD83D\uDD1C I am on a ride right now. Will let you know when I am free! ($randomMarker)"
-    )
+  def tweetAboutNoCar() = {
+    val tweetText =
+      s"\uD83D\uDD1C\uD83D\uDD1C\uD83D\uDD1C I am on a ride right now. Will let you know when I am free! ($randomMarker)"
+    if (!config.realRun) {
+      log.info(s"Would tweet: $tweetText")
+    } else {
+      twitter.createTweet(
+        status = tweetText
+      )
+    }
+    Future.successful(Tweeted)
+  }
 
-  def tweetAboutSearch() =
-    twitter.createTweet(
-      status =
-        s"🔎🔎🔎 There has been no available car for quite some time now. Nevertheless, I keep on searching. Stay tuned! ($randomMarker)"
-    )
+  def tweetAboutSearch() = {
+    val tweetText =
+      s"🔎🔎🔎 There has been no available car for quite some time now. Nevertheless, I keep on searching. Stay tuned! ($randomMarker)"
+    if (!config.realRun) {
+      log.info(s"Would tweet: $tweetText")
+    } else {
+      twitter.createTweet(
+        status = tweetText
+      )
+    }
+    Future.successful(Tweeted)
+  }
 
   def randomMarker =
     Random.alphanumeric.take(6).mkString
