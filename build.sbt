@@ -1,7 +1,7 @@
 name := "kabrioletas"
 description := "Stay up to date with the summer ride"
 
-scalaVersion := "2.13.6"
+scalaVersion := "2.13.7"
 libraryDependencies ++= Seq(
   "lt.dvim.citywasp"              %% "citywasp-api"       % "2.0.3",
   "com.typesafe.akka"             %% "akka-stream"        % "2.6.17",
