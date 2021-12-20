@@ -4,7 +4,7 @@ description := "Stay up to date with the summer ride"
 scalaVersion := "2.13.7"
 libraryDependencies ++= Seq(
   "lt.dvim.citywasp"              %% "citywasp-api"       % "2.0.3",
-  "com.typesafe.akka"             %% "akka-stream"        % "2.6.17",
+  "com.typesafe.akka"             %% "akka-stream"        % "2.6.18",
   "com.typesafe.akka"             %% "akka-http"          % "10.2.7",
   "de.heikoseeberger"             %% "akka-http-circe"    % "1.38.2",
   "com.softwaremill.sttp.client3" %% "akka-http-backend"  % "3.3.18",
