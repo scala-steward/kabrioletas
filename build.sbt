@@ -45,7 +45,7 @@ inThisBuild(
     scalafmtOnCompile := true,
     scalafixOnCompile := true,
     scalafixDependencies ++= Seq(
-      "com.nequissimus" %% "sort-imports" % "0.6.0"
+      "com.nequissimus" %% "sort-imports" % "0.6.1"
     ),
     versionScheme := Some("semver-spec")
   )
