@@ -5,7 +5,7 @@ scalaVersion := "2.13.8"
 libraryDependencies ++= Seq(
   "lt.dvim.citywasp"              %% "citywasp-api"       % "2.0.3",
   "com.typesafe.akka"             %% "akka-stream"        % "2.6.18",
-  "com.typesafe.akka"             %% "akka-http"          % "10.2.7",
+  "com.typesafe.akka"             %% "akka-http"          % "10.2.8",
   "de.heikoseeberger"             %% "akka-http-circe"    % "1.39.2",
   "com.softwaremill.sttp.client3" %% "akka-http-backend"  % "3.4.1",
   "com.danielasfregola"           %% "twitter4s"          % "7.0",
