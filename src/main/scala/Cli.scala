@@ -26,6 +26,7 @@ import eu.timepit.refined.auto._
 import moped.annotations._
 import moped.cli._
 import moped.commands._
+import moped.json.JsonCodec
 import moped.json.JsonDecoder
 import moped.json.JsonEncoder
 import moped.json.Result
@@ -87,11 +88,11 @@ object Kabrioletas {
     Result.fromUnsafe(() => refined.fold(err => throw new Error(err), identity))
   }
 
-  implicit val consumerTokenCodec = moped.macros.deriveCodec(ConsumerToken("", ""))
-  implicit val accessTokenCodec = moped.macros.deriveCodec(AccessToken("", ""))
-  implicit val twitterCodec = moped.macros.deriveCodec(Twitter())
+  implicit lazy val consumerTokenCodec: JsonCodec[ConsumerToken] = moped.macros.deriveCodec(ConsumerToken("", ""))
+  implicit lazy val accessTokenCodec: JsonCodec[AccessToken] = moped.macros.deriveCodec(AccessToken("", ""))
+  implicit lazy val twitterCodec: JsonCodec[Twitter] = moped.macros.deriveCodec(Twitter())
 
-  implicit lazy val parser = CommandParser.derive(Kabrioletas())
+  implicit lazy val parser: CommandParser[Kabrioletas] = CommandParser.derive(Kabrioletas())
   lazy val app = Application
     .fromName(
       binaryName = "kabrioletas",
