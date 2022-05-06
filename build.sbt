@@ -7,7 +7,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"             %% "akka-stream"        % "2.6.19",
   "com.typesafe.akka"             %% "akka-http"          % "10.2.9",
   "de.heikoseeberger"             %% "akka-http-circe"    % "1.39.2",
-  "com.softwaremill.sttp.client3" %% "akka-http-backend"  % "3.5.2",
+  "com.softwaremill.sttp.client3" %% "akka-http-backend"  % "3.6.0",
   "com.danielasfregola"           %% "twitter4s"          % "7.0",
   "org.scala-lang.modules"        %% "scala-java8-compat" % "1.0.2",
   "org.scalameta"                 %% "moped"              % "0.1.11"
