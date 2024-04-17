@@ -10,7 +10,7 @@ libraryDependencies ++= Seq(
   "com.softwaremill.sttp.client3" %% "akka-http-backend"  % "3.9.5",
   "com.danielasfregola"           %% "twitter4s"          % "8.0",
   "org.scala-lang.modules"        %% "scala-java8-compat" % "1.0.2",
-  "org.scalameta"                 %% "moped"              % "0.1.11"
+  "org.scalameta"                 %% "moped"              % "0.2.0"
 )
 
 sonatypeProfileName := "lt.dvim"
